@@ -384,3 +384,34 @@ real_1 <- paper_level_tables$paper_gender_dist %>%
 
 ```
 
+## Topics
+
+```{r}
+topic_table <- document_topics %>% 
+  inner_join(.,journal_aux, by = c("Pub_ID" = "pub_id")) %>% 
+  inner_join(.,(latam_meta %>% 
+                  distinct(Pub_ID,level1,period) %>% 
+                  filter(!is.na(level1)))) %>% 
+  inner_join(paper_level_tables$paper_gender_dist) %>% 
+  filter(Topic != -1) 
+
+interdis_correction <- topic_table %>%
+  group_by(Topic,level1) %>%
+  summarise(n = n_distinct(Pub_ID)) %>%
+  group_by(Topic) %>%
+  mutate(n = n/sum(n)) %>%
+  group_by(Topic) %>%
+  slice_max(n=1,order_by=n) %>%
+  mutate(level1 = ifelse(n>0.5,paste0(level1), paste0("Multidisciplinary"))) %>%
+  select(-n) %>%
+  #in case there is a 50-50
+  unique()
+
+topic_table <- topic_table %>%
+  select(-level1) %>%
+  left_join(.,interdis_correction)
+
+topic_table <- topic_table %>%
+  rename("topic" = "Topic")
+```
+
