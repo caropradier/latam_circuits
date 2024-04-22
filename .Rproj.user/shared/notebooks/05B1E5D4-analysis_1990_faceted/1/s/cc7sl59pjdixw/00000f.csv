@@ -1,5 +1,0 @@
-"0",""
-"0","paper_level_tables <- readRDS('results/paper_level_tables_1990.RDS')"
-"2","Warning: cannot open compressed file 'results/paper_level_tables_1990.RDS', probable reason 'No such file or directory'"
-"2","Error in gzfile(file, ""rb"") : cannot open the connection
-"
